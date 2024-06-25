@@ -27,16 +27,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('/api/data')
+            fetch('/api/data?sheet=all')
                 .then(response => response.json())
                 .then(data => {
                     let select = document.getElementById('sheet');
-                    for (let sheet in data) {
+                    Object.keys(data).forEach(sheet => {
                         let option = document.createElement('option');
                         option.value = sheet;
                         option.text = sheet;
                         select.add(option);
-                    }
+                    });
                 });
         });
 
