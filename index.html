@@ -31,7 +31,7 @@
                 .then(response => response.json())
                 .then(data => {
                     let select = document.getElementById('sheet');
-                    for (let sheet of data.sheets) {
+                    for (let sheet in data) {
                         let option = document.createElement('option');
                         option.value = sheet;
                         option.text = sheet;
