@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Digitalización</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Datos de Digitalización</h1>
+    <label for="sheet">Selecciona una hoja: </label>
+    <select id="sheet" name="sheet" onchange="fetchData()">
+        <!-- Las opciones se llenarán dinámicamente -->
+    </select>
+    <br><br>
+    <div id="table-container"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/data')
+                .then(response => response.json())
+                .then(data => {
+                    let select = document.getElementById('sheet');
+                    for (let sheet of data.sheets) {
+                        let option = document.createElement('option');
+                        option.value = sheet;
+                        option.text = sheet;
+                        select.add(option);
+                    }
+                });
+        });
+
+        function fetchData() {
+            let sheet = document.getElementById('sheet').value;
+            fetch(`/api/data?sheet=${sheet}`)
+                .then(response => response.json())
+                .then(data => {
+                    let tableContainer = document.getElementById('table-container');
+                    tableContainer.innerHTML = '';
+
+                    if (data.error) {
+                        tableContainer.innerHTML = `<p>${data.error}</p>`;
+                        return;
+                    }
+
+                    let table = document.createElement('table');
+                    let headerRow = document.createElement('tr');
+                    Object.keys(data[0]).forEach(key => {
+                        let th = document.createElement('th');
+                        th.textContent = key;
+                        headerRow.appendChild(th);
+                    });
+                    table.appendChild(headerRow);
+
+                    data.forEach(row => {
+                        let tr = document.createElement('tr');
+                        Object.values(row).forEach(value => {
+                            let td = document.createElement('td');
+                            td.textContent = value;
+                            tr.appendChild(td);
+                        });
+                        table.appendChild(tr);
+                    });
+
+                    tableContainer.appendChild(table);
+                });
+        }
+    </script>
+</body>
+</html>
