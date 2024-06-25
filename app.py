@@ -13,7 +13,9 @@ data = {sheet: excel_data.parse(sheet).to_dict(orient='records') for sheet in ex
 @app.route('/api/data', methods=['GET'])
 def get_data():
     sheet = request.args.get('sheet')
-    if sheet in data:
+    if sheet == 'all':
+        return jsonify(list(data.keys()))
+    elif sheet in data:
         return jsonify(data[sheet])
     else:
         return jsonify({"error": "Sheet not found"}), 404
